@@ -1,0 +1,87 @@
+<div class="container">
+    <div class="card p-3" style="max-width: 500px; margin: auto;">
+      <h1 class="text-center mb-3">Age Calculator</h1>
+  
+      <!-- Form -->
+      <form id="ageForm">
+        <div class="mb-3">
+          <label for="birthDate" class="form-label">Enter Your Date of Birth</label>
+          <div class="input-group">
+            <input type="date" class="form-control" id="birthDate" required />
+          </div>
+          <div id="birthDateFeedback" class="invalid-feedback">
+            Please provide a valid date of birth.
+          </div>
+        </div>
+  
+        <div class="mb-3">
+          <button type="submit" class="btn btn-primary w-100">Calculate Age</button>
+        </div>
+      </form>
+  
+      <!-- Result -->
+      <div class="mt-3 text-center">
+        <h3 id="result" class="result-text"></h3>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Scripts -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  
+  <script>
+    // Age Calculation Function (years, months, and days)
+    function calculateAge(birthDate) {
+      const today = new Date();
+      const birthDateObj = new Date(birthDate);
+  
+      // Prevent future date entry by comparing with current date
+      if (birthDateObj > today) {
+        $('#birthDate').addClass('is-invalid');
+        $('#result').text('Please enter a valid date (not a future date).');
+        return;
+      } else {
+        $('#birthDate').removeClass('is-invalid');
+      }
+  
+      let years = today.getFullYear() - birthDateObj.getFullYear();
+      let months = today.getMonth() - birthDateObj.getMonth();
+      let days = today.getDate() - birthDateObj.getDate();
+  
+      // Adjust if the month difference is negative or if the current day is before the birth day in the current month
+      if (months < 0 || (months === 0 && days < 0)) {
+        years--;
+        months += 12;
+      }
+  
+      // If the days are negative, adjust by borrowing days from the previous month
+      if (days < 0) {
+        const lastMonth = new Date(today.getFullYear(), today.getMonth() - 1, 0); // Get the last day of the previous month
+        days += lastMonth.getDate(); // Adjust days by adding the days of the last month
+      }
+  
+      return { years, months, days };
+    }
+  
+    // Form submit event
+    $('#ageForm').submit(function(event) {
+      event.preventDefault(); // Prevent form submission and page reload
+  
+      const birthDate = $('#birthDate').val();
+  
+      // Validation (check if birth date is entered)
+      if (!birthDate) {
+        $('#birthDate').addClass('is-invalid');
+        return;
+      } else {
+        $('#birthDate').removeClass('is-invalid');
+      }
+  
+      // Calculate and display the age in years, months, and days
+      const { years, months, days } = calculateAge(birthDate);
+      if (years !== undefined) {
+        $('#result').text(`You are ${years} years, ${months} months, and ${days} days old.`);
+      }
+    });
+  </script>
+  
