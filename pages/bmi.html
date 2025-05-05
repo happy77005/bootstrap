@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>BMI Calculator</title>
+
+  <!-- Bootstrap 5 CDN -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+  <style>
+    body {
+      background-color: #f8f9fa;
+    }
+    .bmi-container {
+      max-width: 600px;
+      margin: 5% auto;
+      padding: 20px;
+      background-color: #ffffff;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+    .bmi-result {
+      margin-top: 20px;
+      padding: 10px;
+      font-size: 1.2rem;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- BMI Calculator Form -->
+  <div class="bmi-container">
+    <h3 class="text-center mb-4">BMI Calculator</h3>
+    <form id="bmiForm" novalidate>
+      <div class="mb-3">
+        <label for="weight" class="form-label">Weight (kg) <i class="fas fa-weight"></i></label>
+        <div class="input-group">
+          <input type="number" class="form-control" id="weight" required placeholder="Enter weight in kg">
+          <div class="invalid-feedback">
+            Please provide a valid weight.
+          </div>
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <label for="heightFeet" class="form-label">Height (feet) <i class="fas fa-ruler"></i></label>
+        <div class="input-group">
+          <input type="number" class="form-control" id="heightFeet" required placeholder="Enter height in feet">
+          <div class="invalid-feedback">
+            Please provide a valid height.
+          </div>
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <label for="heightInches" class="form-label">Height (inches)</label>
+        <div class="input-group">
+          <input type="number" class="form-control" id="heightInches" required placeholder="Enter height in inches">
+          <div class="invalid-feedback">
+            Please provide a valid height in inches.
+          </div>
+        </div>
+      </div>
+
+      <button type="submit" class="btn btn-primary w-100">Calculate BMI</button>
+    </form>
+
+    <!-- BMI Result -->
+    <div id="bmiResult" class="bmi-result text-center" style="display: none;">
+      <h4>Your BMI is: <span id="bmiValue">-</span></h4>
+      <p id="bmiCategory">-</p>
+    </div>
+  </div>
+
+  <!-- Bootstrap 5 & jQuery -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script>
+    // Function to calculate BMI
+    function calculateBMI(weight, heightInCm) {
+      let heightInMeters = heightInCm / 100; // Convert cm to meters
+      return weight / (heightInMeters * heightInMeters);
+    }
+
+    // Validate and handle form submission
+    $('#bmiForm').on('submit', function (e) {
+      e.preventDefault();
+
+      // Clear previous result
+      $('#bmiResult').hide();
+      $('#bmiValue').text('-');
+      $('#bmiCategory').text('-');
+
+      // Form Validation
+      let weight = $('#weight').val();
+      let heightFeet = $('#heightFeet').val();
+      let heightInches = $('#heightInches').val();
+
+      // Check if both fields are valid
+      if (!weight || !heightFeet || !heightInches || weight <= 0 || heightFeet <= 0 || heightInches < 0) {
+        $('#bmiForm')[0].classList.add('was-validated');
+        return;
+      }
+
+      // Convert height to centimeters (1 foot = 30.48 cm, 1 inch = 2.54 cm)
+      let totalHeightInCm = (heightFeet * 30.48) + (heightInches * 2.54);
+
+      // Calculate BMI
+      let bmi = calculateBMI(weight, totalHeightInCm);
+
+      // Show result
+      $('#bmiResult').show();
+      $('#bmiValue').text(bmi.toFixed(2));
+
+      // BMI Category based on result
+      let category = '';
+      if (bmi < 18.5) {
+        category = 'Underweight';
+      } else if (bmi >= 18.5 && bmi < 24.9) {
+        category = 'Normal weight';
+      } else if (bmi >= 25 && bmi < 29.9) {
+        category = 'Overweight';
+      } else {
+        category = 'Obesity';
+      }
+      $('#bmiCategory').text(category);
+    });
+
+    // Custom validation for input fields
+    document.getElementById('weight').addEventListener('input', function () {
+      if (this.value <= 0) {
+        this.classList.add('is-invalid');
+      } else {
+        this.classList.remove('is-invalid');
+      }
+    });
+
+    document.getElementById('heightFeet').addEventListener('input', function () {
+      if (this.value <= 0) {
+        this.classList.add('is-invalid');
+      } else {
+        this.classList.remove('is-invalid');
+      }
+    });
+
+    document.getElementById('heightInches').addEventListener('input', function () {
+      if (this.value < 0) {
+        this.classList.add('is-invalid');
+      } else {
+        this.classList.remove('is-invalid');
+      }
+    });
+  </script>
+</body>
+</html>

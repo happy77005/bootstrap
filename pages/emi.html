@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>EMI Calculator</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
+  <style>
+    body {
+      background-color: #f8f9fa;
+      height: 100vh;
+      margin: 0;
+    }
+    .card {
+      width: 100%;
+      max-width: 22rem; /* Reduced max width */
+      margin: 0 auto;
+    }
+    .center-content {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100%;
+    }
+    .card-body {
+      padding: 1.5rem;
+    }
+    .form-control {
+      padding: 0.75rem;
+    }
+    .input-group-text {
+      padding: 0.75rem;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container-fluid center-content">
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <h5 class="card-title">EMI Calculator <i class="fas fa-calculator"></i></h5>
+        <p class="card-text small">Enter loan amount, interest rate, and tenure in months.</p>
+        
+        <form id="emiForm">
+          <div class="mb-3">
+            <label for="loanAmount" class="form-label">Loan Amount</label>
+            <div class="input-group">
+              <span class="input-group-text"><i class="fas fa-rupee-sign"></i></span>
+              <input type="number" class="form-control" id="loanAmount" placeholder="e.g. 500000" required />
+            </div>
+          </div>
+          
+          <div class="mb-3">
+            <label for="interestRate" class="form-label">Interest Rate (%)</label>
+            <div class="input-group">
+              <input type="number" class="form-control" id="interestRate" placeholder="e.g. 7.5" required />
+              <span class="input-group-text">%</span>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="loanTenure" class="form-label">Tenure (Months)</label>
+            <input type="number" class="form-control" id="loanTenure" placeholder="e.g. 60" required />
+          </div>
+
+          <button type="submit" class="btn btn-primary w-100">Calculate EMI</button>
+        </form>
+
+        <div class="mt-4" id="result" style="display:none;">
+          <h6>EMI Result:</h6>
+          <p id="calculatedEMI" class="mb-0"></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    document.getElementById('emiForm').addEventListener('submit', function(event) {
+      event.preventDefault();
+      
+      const loanAmount = parseFloat(document.getElementById('loanAmount').value);
+      const interestRate = parseFloat(document.getElementById('interestRate').value);
+      const loanTenure = parseFloat(document.getElementById('loanTenure').value);
+
+      if (isNaN(loanAmount) || isNaN(interestRate) || isNaN(loanTenure)) {
+        alert('Please enter valid numbers.');
+        return;
+      }
+
+      const monthlyInterestRate = interestRate / 100 / 12;
+      const emi = (loanAmount * monthlyInterestRate * Math.pow(1 + monthlyInterestRate, loanTenure)) /
+                  (Math.pow(1 + monthlyInterestRate, loanTenure) - 1);
+      
+      document.getElementById('calculatedEMI').textContent = `Your monthly EMI is ₹${emi.toFixed(2)}.`;
+      document.getElementById('result').style.display = 'block';
+    });
+  </script>
+  
+</body>
+</html>
